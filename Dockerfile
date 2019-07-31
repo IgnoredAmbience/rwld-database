@@ -1,4 +1,5 @@
 FROM datasetteproject/datasette AS build
+WORKDIR /app
 COPY data ./data
 RUN pip install xlsx2csv csvs-to-sqlite
 RUN xlsx2csv -aim data/Railway-Work-Life-Death-database.xlsx data
@@ -8,8 +9,8 @@ RUN datasette inspect data.db --inspect-file inspect-data.json
 FROM datasetteproject/datasette
 WORKDIR /app
 
-COPY --from=build /github/workspace/data.db .
-COPY --from=build /github/workspace/inspect-data.json .
+COPY --from=build /app/data.db .
+COPY --from=build /app/inspect-data.json .
 COPY metadata.json .
 COPY templates ./templates
 COPY static ./static
